@@ -1,3 +1,5 @@
+import {Dict} from './types';
+
 export class Maps {
     public static transform<K, T, V>(map: Map<K, T>, mapper: (item: T) => V): Map<K, V> {
         const newMap = new Map<K, V>();
@@ -25,8 +27,8 @@ export class Maps {
         return defaultValue;
     }
 
-    public static toMap<T, U = T>(map: Map<string, T>, valueMapper?: (value: T) => U): { [key: string]: U } {
-        const obj: { [key: string]: U } = {};
+    public static toObject<T, U = T>(map: Map<string, T>, valueMapper?: (value: T) => U): Dict<U> {
+        const obj: Dict<U> = {};
         map.forEach((v, k) => obj[k] = valueMapper ? valueMapper(v) : v as unknown as U);
         return obj;
     }

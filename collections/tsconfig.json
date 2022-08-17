@@ -43,6 +43,6 @@
   ],
   "exclude": [
     "./dist/**/*",
-    "./src/**/*.spec.ts"
+//    "./src/**/*.spec.ts"
   ]
 }
