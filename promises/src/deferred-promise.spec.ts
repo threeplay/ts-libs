@@ -1,11 +1,11 @@
 import {DeferredPromise} from './deferred-promise';
-import {isDataView} from 'util/types';
+import {Promises} from './index';
 
 describe('Deferred Promise', () => {
     let sut: DeferredPromise<number>;
 
     beforeEach(() => {
-        sut = new DeferredPromise();
+        sut = Promises.deferred();
     });
 
     it('should not resolve or reject a deferred promise when created', async () => {
