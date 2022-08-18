@@ -1,4 +1,4 @@
-import {Lists} from './lists';
+import {Lists} from '../lists';
 
 describe('Lists.groupBy', () => {
     it('should group objects by named key', async () => {

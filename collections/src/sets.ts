@@ -1,4 +1,6 @@
-export class Sets {
+export abstract class Sets {
+    private constructor() {}
+
     public static union<T>(a: Set<T>, b: Set<T>): Set<T> {
         const union = new Set<T>();
         a.forEach(v => union.add(v));

@@ -1,6 +1,8 @@
 import {Dict} from './types';
 
-export class Objects {
+export abstract class Objects {
+    private constructor() {}
+
     public static toList<T, U>(source: Dict<T>, fn: (value: T, key: string) => U | undefined): U[] {
         const list: U[] = [];
         Object.keys(source).forEach(key => {

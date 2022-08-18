@@ -1,4 +1,6 @@
-export class Lists {
+export abstract class Lists {
+    private constructor() {}
+
     public static distinct<T>(list: T[], byKey: (item: T) => unknown = key => key): T[] {
         const seen = new Set<unknown>();
         return list.filter(item => {
@@ -32,7 +34,7 @@ export class Lists {
         return group;
     }
 
-    public static associateByKey<T, K>(list: T[], byKey: (item: T) => K): Map<K, T> {
+    public static associateBy<T, K>(list: T[], byKey: (item: T) => K): Map<K, T> {
         const association = new Map<K, T>();
         list.forEach(item => association.set(byKey(item), item));
         return association;
