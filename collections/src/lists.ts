@@ -1,6 +1,4 @@
 export abstract class Lists {
-    private constructor() {}
-
     public static distinct<T>(list: T[], byKey: (item: T) => unknown = key => key): T[] {
         const seen = new Set<unknown>();
         return list.filter(item => {

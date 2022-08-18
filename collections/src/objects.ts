@@ -1,8 +1,6 @@
 import {Dict} from './types';
 
 export abstract class Objects {
-    private constructor() {}
-
     public static toList<T, U>(source: Dict<T>, fn: (value: T, key: string) => U | undefined): U[] {
         const list: U[] = [];
         Object.keys(source).forEach(key => {
@@ -34,10 +32,11 @@ export abstract class Objects {
     }
 
     public static removeUndefined<T>(possibleObject: T): T {
-        if (
+        if (Array.isArray(possibleObject)) {
+            return possibleObject.map(obj => this.removeUndefined(obj)) as unknown as T;
+        } else if (
             typeof possibleObject === 'object' &&
             possibleObject &&
-            !Array.isArray(possibleObject) &&
             !Buffer.isBuffer(possibleObject)
         ) {
             const newObj: any = {};

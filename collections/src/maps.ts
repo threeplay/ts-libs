@@ -1,8 +1,6 @@
 import {Dict} from './types';
 
 export abstract class Maps {
-    private constructor() {}
-
     public static transform<K, T, V>(map: Map<K, T>, mapper: (item: T) => V): Map<K, V> {
         const newMap = new Map<K, V>();
         map.forEach((v, k) => newMap.set(k, mapper(v)));
