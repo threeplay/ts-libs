@@ -1,0 +1,7 @@
+{
+  "name": "ts-libs",
+  "workspaces": [
+    "collections",
+    "promises"
+  ]
+}

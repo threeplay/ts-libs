@@ -16,6 +16,8 @@
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "allowJs": true,
+    "removeComments": true,
+    "declaration": true,
 
     "moduleResolution": "node",
 
