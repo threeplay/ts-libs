@@ -12,9 +12,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.build.json",
     "test": "ts-mocha -p tsconfig.json -r mocha.base.ts 'src/**/*.spec.ts'",
-    "test-watch": "nodemon -w ./src -e ts,js,json ./node_modules/ts-mocha/bin/ts-mocha -p tsconfig.json -r mocha.base.ts 'src/**/*.spec.ts'",
+    "test-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run test\"",
     "cover": "nyc npm test",
-    "cover-watch": "nodemon -w ./src -e ts,js,json npm cover"
+    "cover-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run cover\""
   },
   "author": "Threeplay Inc.",
   "license": "ISC",
