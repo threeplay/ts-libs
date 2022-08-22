@@ -64,14 +64,4 @@ export class CachedSchemaRegistry implements SchemaRegistry{
         }
         return resolveSchema;
     }
-
-
-
-    // public async cacheIfNeeded(schemas: string[]): Promise<void> {
-    // }
-    //
-    // public serialize(schema: string, data: unknown): Buffer | null {
-    //     return this.cache.get(schema)?.serialize(data) ?? null;
-    // }
-    //
 }

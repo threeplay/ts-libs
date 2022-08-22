@@ -100,4 +100,28 @@ describe('Cached Schema Registry', () => {
             expect(sut.isCached('a')).to.be.false;
         });
     });
+
+    describe('cache management', function () {
+        beforeEach(async () => {
+            registry.getSchema.withArgs('a').returns(new TestNumberSchema('a'));
+            registry.getSchema.withArgs('b').returns(new TestNumberSchema('b'));
+            await sut.cacheIfNeeded(['a', 'b']);
+            expect(sut.isCached('a')).to.be.true;
+            expect(sut.isCached('b')).to.be.true;
+        });
+
+        it('should remove cached schema', async () => {
+            sut.delete('a');
+
+            expect(sut.isCached('a')).to.be.false;
+            expect(sut.isCached('b')).to.be.true;
+        });
+
+        it('should remove all cached schemas', async () => {
+            sut.resetAll();
+
+            expect(sut.isCached('a')).to.be.false;
+            expect(sut.isCached('b')).to.be.false;
+        });
+    });
 });
