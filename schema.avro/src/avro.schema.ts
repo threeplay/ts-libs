@@ -1,5 +1,5 @@
 import { Type, Schema as AvroTypedSchema } from 'avsc';
-import {Schema} from '../../schema/src/interface';
+import {Schema} from '@threeplay/schema';
 
 export class AvroSchema<T> implements Schema<T> {
     public static from<T>(schema: AvroTypedSchema, name?: string): Schema<T> {
@@ -10,6 +10,10 @@ export class AvroSchema<T> implements Schema<T> {
         private readonly avroType: Type,
         public readonly name: string | undefined,
     ) {}
+
+    public validate(type: unknown): type is T {
+        return this.avroType.isValid(type);
+    }
 
     public deserialize(buffer: Buffer): T | null {
         return this.avroType.fromBuffer(buffer);

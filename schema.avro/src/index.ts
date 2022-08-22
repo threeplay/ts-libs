@@ -1,4 +1,1 @@
-export function libName(): string {
-    return '.template';
-}
-
+export * from './avro.schema';

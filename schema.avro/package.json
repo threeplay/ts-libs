@@ -26,7 +26,8 @@
     "ui": "bdd"
   },
   "dependencies": {
-    "@threeplay/schema": "^0"
+    "@threeplay/schema": "^0",
+    "avsc": "^5.7.5"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",
