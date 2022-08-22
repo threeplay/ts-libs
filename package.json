@@ -1,0 +1,10 @@
+{
+  "name": "ts-libs",
+  "workspaces": [
+    "collections",
+    "promises",
+    "schema",
+    "schema.avro",
+    "test-support"
+  ]
+}

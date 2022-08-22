@@ -1,9 +1,9 @@
 {
-  "name": "@threeplay/collections",
-  "version": "0.2.0",
-  "description": "Collection utilities",
-  "dist": {},
+  "name": "@threeplay/schema",
+  "version": "0.1.0",
+  "description": "Core schema support",
   "main": "dist/index.js",
+  "dist": {},
   "files": [
     "./dist"
   ],
@@ -32,6 +32,8 @@
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11",
     "chai": "^4.3.6",
+    "@threeplay/test-support": "^0",
+    "chai-as-promised": "^7.1.1",
     "mocha": "^10.0.0",
     "sinon": "^13.0.2",
     "nyc": "^15.1.0",

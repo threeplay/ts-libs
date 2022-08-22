@@ -41,10 +41,10 @@
   ],
   "include": [
     "./src/**/*",
-    "./test/**/*",
     "./typings/**/*"
   ],
   "exclude": [
-    "./dist/**/*"
+    "./dist/**/*",
+//    "./src/**/*.spec.ts"
   ]
 }
