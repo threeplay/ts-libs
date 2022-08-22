@@ -2,6 +2,7 @@
   "name": "@threeplay/lib",
   "version": "0.1.0",
   "description": "LIB DESCRIPTION",
+  "main": "dist/index.js",
   "dist": {},
   "files": [
     "./dist"
