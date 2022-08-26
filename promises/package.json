@@ -1,6 +1,6 @@
 {
   "name": "@threeplay/promises",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Promise utilities",
   "main": "dist/index.js",
   "dist": {},
