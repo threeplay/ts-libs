@@ -1,7 +1,7 @@
 {
-  "name": "@threeplay/lib",
+  "name": "@threeplay/event-stream.kafka",
   "version": "0.1.0",
-  "description": "LIB DESCRIPTION",
+  "description": "Kafka event stream",
   "main": "dist/index.js",
   "dist": {},
   "files": [
@@ -14,7 +14,7 @@
     "build": "tsc -p tsconfig.build.json",
     "test": "ts-mocha -p tsconfig.json -r mocha.base.ts 'src/**/*.spec.ts'",
     "test-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run test\"",
-    "cover": "nyc --exclude **/*.spec.ts npm test",
+    "cover": "nyc npm test",
     "cover-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run cover\""
   },
   "author": "Threeplay Inc.",
@@ -26,6 +26,8 @@
     "ui": "bdd"
   },
   "dependencies": {
+    "@threeplay/event-stream": "latest",
+    "kafkajs": "^2.2.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",

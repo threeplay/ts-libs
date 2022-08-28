@@ -20,17 +20,4 @@ describe('In Memory Schema Registry', () => {
         expect(schema).to.be.instanceof(TestNumberSchema);
         expect(schema?.name).to.equal('a');
     });
-
-    it('should override schema name in registry', async () => {
-        sut.add(new TestNumberSchema('a'), 'b');
-        expect(await sut.getSchema('a')).to.be.null;
-
-        const schema = await sut.getSchema('b');
-        expect(schema).to.be.instanceof(TestNumberSchema);
-        expect(schema?.name).to.equal('a');
-    });
-
-    it('should throw if trying to add a schema without a name', async () => {
-        expect(() => sut.add(new TestNumberSchema())).to.throw(MissingSchemaName);
-    });
 });

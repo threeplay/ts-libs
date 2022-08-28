@@ -1,6 +1,6 @@
 {
   "name": "@threeplay/schema",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Core schema support",
   "main": "dist/index.js",
   "dist": {},
@@ -14,7 +14,7 @@
     "build": "tsc -p tsconfig.build.json",
     "test": "ts-mocha -p tsconfig.json -r mocha.base.ts 'src/**/*.spec.ts'",
     "test-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run test\"",
-    "cover": "nyc npm test",
+    "cover": "nyc --exclude '**/*.spec.ts' npm test",
     "cover-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run cover\""
   },
   "author": "Threeplay Inc.",

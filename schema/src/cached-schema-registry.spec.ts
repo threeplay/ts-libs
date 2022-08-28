@@ -63,10 +63,21 @@ describe('Cached Schema Registry', () => {
         expect(sut.isCached('a'), 'a').to.be.false;
     });
 
+    it('should do nothing if no schemas passed in cacheIfNeeded', async () => {
+        const response = await sut.cacheIfNeeded([]);
+
+        expect(response).to.deep.equal({
+            cached: [],
+            missing: [],
+            failed: [],
+        });
+    });
+
     it('should not resolve from source if not cached', async () => {
         expect(sut.isCached('a')).to.be.false;
         await expect(sut.getSchema('a')).to.eventually.be.null;
         expect(sut.isCached('a')).to.be.false;
+        expect(registry.getSchema.args).to.have.lengthOf(0);
     });
 
     describe('when resolveIfNotCached is true', () => {
@@ -98,6 +109,17 @@ describe('Cached Schema Registry', () => {
             expect(sut.isCached('a')).to.be.false;
             await expect(sut.getSchema('a')).to.eventually.be.rejectedWith(error);
             expect(sut.isCached('a')).to.be.false;
+        });
+
+        it('should return cached schema once resolved', async () => {
+             registry.getSchema.withArgs('a').resolves(new TestNumberSchema('a'));
+             const schema =  await sut.getSchema('a');
+             registry.getSchema.resetHistory();
+
+             expect(schema).to.not.be.null;
+             const cachedSchema = await sut.getSchema('a');
+             expect(cachedSchema?.name).to.equal(schema?.name);
+             expect(registry.getSchema.args).to.have.lengthOf(0);
         });
     });
 

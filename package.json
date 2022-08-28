@@ -6,6 +6,8 @@
     "promises",
     "schema",
     "schema.avro",
-    "event-stream"
+    "schema.redis-registry",
+    "event-stream",
+    "event-stream.kafka"
   ]
 }
