@@ -52,6 +52,9 @@ export class InMemoryEventStream implements EventStreamEmitter {
                     }
                     if (writerSchema.name !== consumer.config.schema.name) {
                         const transformer = writerSchema.transformTo(consumer.config.schema);
+                        if (!transformer) {
+                            throw Error(`Cannot transform from writer schema`);
+                        }
                         consumerEvent = {
                             ...event,
                             data: transformer.deserialize(writerSchema.serialize(event.data)),
