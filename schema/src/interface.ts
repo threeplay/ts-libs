@@ -1,5 +1,3 @@
-import {SchemaName} from "@threeplay/event-stream";
-
 export interface SchemaDeserializer<T> {
     deserialize(buffer: Buffer): T | null;
 }
@@ -24,11 +22,11 @@ export interface SchemaRegistry {
     getSchema(schema: string): Promise<Schema<unknown> | null>;
 }
 
-export function schemaWithVersion(name: string, version: string): SchemaName {
-    return `${name}:${version}` as SchemaName;
+export function schemaWithVersion(name: string, version: string): string {
+    return `${name}:${version}`;
 }
 
-export function unpackSchemaName(schemaName: SchemaName): { name: string; version?: string } {
+export function unpackSchemaName(schemaName: string): { name: string; version?: string } {
     const [name, version] = schemaName.split(':');
     return { name, version };
 }

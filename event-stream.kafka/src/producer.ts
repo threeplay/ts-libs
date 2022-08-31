@@ -3,6 +3,7 @@ import {CachedSchemaRegistry, Schema, SchemaRegistry} from "@threeplay/schema";
 import {Kafka, KafkaJSConnectionError, Producer} from "kafkajs";
 import {Lists, Objects} from "@threeplay/collections";
 import {Promises} from "@threeplay/promises";
+import {Callback} from "./utils";
 
 enum KafkaConnectionState {
     Disconnected = 'disconnected',

@@ -1,5 +1,4 @@
 import {Schema, SchemaDeserializer, SchemaRegistry, unpackSchemaName} from "./interface";
-import {SchemaName} from "@threeplay/event-stream";
 
 export type SchemaMatching = 'any' | 'exact' | 'similar';
 
@@ -17,7 +16,7 @@ export type SchemaMatching = 'any' | 'exact' | 'similar';
  * @returns serializer if schemas are compatible, or null otherwise
  * @throws registry errors if fails to resolve writer schema
  */
-export async function schemaDeserializer<T>(registry: SchemaRegistry, writerSchema: SchemaName | Schema<unknown>, matching: SchemaMatching, readerSchema: Schema<T>): Promise<SchemaDeserializer<T> | null> {
+export async function schemaDeserializer<T>(registry: SchemaRegistry, writerSchema: string | Schema<unknown>, matching: SchemaMatching, readerSchema: Schema<T>): Promise<SchemaDeserializer<T> | null> {
     const writerSchemaName = typeof writerSchema === 'string' ? writerSchema : (writerSchema as Schema<unknown>).name;
     if (readerSchema.name === writerSchemaName) {
         return readerSchema;
@@ -28,8 +27,8 @@ export async function schemaDeserializer<T>(registry: SchemaRegistry, writerSche
         case 'any':
             break;
         case 'similar':
-            const { name: writerSchemaType } = unpackSchemaName(writerSchemaName as SchemaName);
-            const { name: readerSchemaType } = unpackSchemaName(readerSchema.name as SchemaName);
+            const { name: writerSchemaType } = unpackSchemaName(writerSchemaName);
+            const { name: readerSchemaType } = unpackSchemaName(readerSchema.name);
             if (writerSchemaType !== readerSchemaType) {
                 return null;
             }
