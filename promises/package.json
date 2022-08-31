@@ -1,11 +1,11 @@
 {
   "name": "@threeplay/promises",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Promise utilities",
   "main": "dist/index.js",
   "dist": {},
   "files": [
-    "./dist"
+    "dist"
   ],
   "engine": {
     "node": "16.12"

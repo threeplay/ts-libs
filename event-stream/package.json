@@ -1,11 +1,11 @@
 {
   "name": "@threeplay/event-stream",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Event stream interface",
   "main": "dist/index.js",
   "dist": {},
   "files": [
-    "./dist"
+    "dist"
   ],
   "engine": {
     "node": "16.12"
