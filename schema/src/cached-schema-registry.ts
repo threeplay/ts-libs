@@ -1,6 +1,13 @@
 import {Schema, SchemaRegistry} from './interface';
 
 export class CachedSchemaRegistry implements SchemaRegistry{
+    public static wrapIfNeeded(registry: SchemaRegistry): CachedSchemaRegistry {
+        if (registry instanceof CachedSchemaRegistry) {
+            return registry;
+        }
+        return new CachedSchemaRegistry(registry, { resolveIfNotCached: true });
+    }
+
     private readonly cache = new Map<string, Schema<unknown>>();
 
     constructor(

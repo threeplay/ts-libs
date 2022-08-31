@@ -1,21 +1,21 @@
 import {EventStreamEmitter} from "./emitter";
 import {SchemaName, Topic, TopicEvent} from "./topic-event";
-import {EventStreamConsumer} from "./consumer";
+import {EventStreamProcessor} from "./consumer";
 import {Schema, SchemaRegistry} from "@threeplay/schema";
 
-interface ConsumerConfig {
+interface ProcessorConfig {
     schema?: Schema<unknown>;
-    consumer: EventStreamConsumer;
+    processor: EventStreamProcessor;
 }
 
 export class InMemoryEventStream implements EventStreamEmitter {
-    public readonly consumers: { topic?: Topic, config: ConsumerConfig }[] = [];
+    public readonly consumers: { topic?: Topic, config: ProcessorConfig }[] = [];
 
     public constructor(private readonly options: {
         registry?: SchemaRegistry,
     } = {}) {}
 
-    public async addConsumer(consumer: EventStreamConsumer, options?: {
+    public async addProcessor(processor: EventStreamProcessor, options?: {
         topic: Topic,
         schema: SchemaName | Schema<unknown>,
     }): Promise<void> {
@@ -23,7 +23,7 @@ export class InMemoryEventStream implements EventStreamEmitter {
             topic: options?.topic,
             config: {
                 schema: await this.resolveSchema(options?.schema) ?? undefined,
-                consumer,
+                processor,
             },
         });
     }
@@ -61,7 +61,7 @@ export class InMemoryEventStream implements EventStreamEmitter {
                         };
                     }
                 }
-                await consumer.config.consumer.process(consumerEvent);
+                await consumer.config.processor.process(consumerEvent);
             }
         }
     }

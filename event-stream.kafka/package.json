@@ -26,7 +26,10 @@
     "ui": "bdd"
   },
   "dependencies": {
-    "@threeplay/event-stream": "latest",
+    "@threeplay/schema": "^0",
+    "@threeplay/event-stream": "^0",
+    "@threeplay/collections": "^0",
+    "@threeplay/promises": "^0",
     "kafkajs": "^2.2.0"
   },
   "devDependencies": {

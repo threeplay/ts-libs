@@ -1,4 +1,2 @@
-export function libName(): string {
-    return '.template';
-}
-
+export * from './consumer';
+export * from './producer';

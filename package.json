@@ -1,5 +1,8 @@
 {
   "name": "ts-libs",
+  "scripts": {
+    "publish": "echo publishing"
+  },
   "workspaces": [
     "test-support",
     "collections",

@@ -1,11 +1,11 @@
 {
   "name": "@threeplay/schema",
-  "version": "0.3.0",
+  "version": "0.5.0",
   "description": "Core schema support",
   "main": "dist/index.js",
   "dist": {},
   "files": [
-    "./dist"
+    "dist"
   ],
   "engine": {
     "node": "16.12"

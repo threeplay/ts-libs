@@ -5,6 +5,10 @@ export abstract class Promises {
         return new DeferredPromise<T>();
     }
 
+    public static async map<T, U>(list: T[], fn: (value: T) => Promise<U>): Promise<U[]> {
+        return Promise.all(list.map(fn));
+    }
+
     public static once(fn: () => Promise<void>): () => Promise<void> {
         let invoked: Promise<void> | undefined;
         return () => {
