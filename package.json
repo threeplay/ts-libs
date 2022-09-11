@@ -5,6 +5,7 @@
   },
   "workspaces": [
     "test-support",
+    "observability",
     "collections",
     "promises",
     "schema",

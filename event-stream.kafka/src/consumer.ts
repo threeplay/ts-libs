@@ -17,7 +17,7 @@ export class A implements EventStreamProcessor {
     }
 }
 
-interface EventStreamTopicProcessor {
+export interface EventStreamTopicProcessor {
     topic: string | string[],
     processors: EventStreamProcessorConfig[];
 }
@@ -32,23 +32,37 @@ enum KafkaConsumerState {
     Disconnecting = 'disconnecting',
 }
 
-export class KafkaEventStreamConsumer {
+export enum ProcessingErrors {
+    NoProcessors = 'no-processors',
+    NoContent = 'no-content',
+    Processor = 'processor',
+}
 
+export type KafkaConsumerOnErrorHandler = (type: ProcessingErrors, error: Error) => 'ignore' | 'throw';
+
+export class KafkaEventStreamConsumer {
     public static withConfig(config: {
         clientId: string;
         groupId: string;
         brokers: string[],
         schemaRegistry: SchemaRegistry,
         processors: EventStreamTopicProcessor[],
+        onError?: KafkaConsumerOnErrorHandler,
     }): KafkaEventStreamConsumer {
         return this.withClient(new Kafka({
             clientId: config.clientId,
             brokers: config.brokers,
-        }), config.groupId, config.processors, config.schemaRegistry);
+        }), config.groupId, config.processors, config.schemaRegistry, config.onError);
     }
 
-    public static withClient(client: Kafka, groupId: string, processors: EventStreamTopicProcessor[], schemaRegistry: SchemaRegistry): KafkaEventStreamConsumer {
-        return new KafkaEventStreamConsumer(client.consumer({ groupId }), processors, schemaRegistry);
+    public static withClient(
+        client: Kafka,
+        groupId: string,
+        processors: EventStreamTopicProcessor[],
+        schemaRegistry: SchemaRegistry,
+        onError?: KafkaConsumerOnErrorHandler,
+    ): KafkaEventStreamConsumer {
+        return new KafkaEventStreamConsumer(client.consumer({ groupId }), processors, schemaRegistry, onError);
     }
 
     private readonly registry: CachedSchemaRegistry;
@@ -59,7 +73,8 @@ export class KafkaEventStreamConsumer {
     constructor(
         private readonly consumer: Consumer,
         private readonly processors: EventStreamTopicProcessor[],
-        registry: SchemaRegistry
+        registry: SchemaRegistry,
+        private readonly onError?: KafkaConsumerOnErrorHandler,
     ) {
         this.registry = CachedSchemaRegistry.wrapIfNeeded(registry);
     }
@@ -154,15 +169,23 @@ export class KafkaEventStreamConsumer {
             this.state = KafkaConsumerState.Running;
             await this.consumer.run({
                 eachMessage: async ({topic, message}) => {
-                    const schemaName = ('headers' in message ? message.headers?.schema : undefined) as string;
+                    const schemaName = toString('headers' in message ? message.headers?.schema as Buffer : undefined);
                     if (schemaName) {
                         const processorsForTopic = this.processors
                             .filter(processor => typeof processor.topic === 'string' ? topic === processor.topic : processor.topic.some(t => t === topic));
                         if (processorsForTopic.length <= 0) {
-                            throw Error(`Not processors found for this topic: ${topic}`);
+                            const error = Error(`Not processors found for this topic: ${topic}`);
+                            if (this.onError && this.onError(ProcessingErrors.NoProcessors, error) === 'ignore') {
+                                return;
+                            }
+                            throw error;
                         }
                         if (!message.value) {
-                            throw Error(`Topic message without content: ${topic}`);
+                            const error = Error(`Topic message without content: ${topic}`);
+                            if (this.onError && this.onError(ProcessingErrors.NoContent, error) === 'ignore') {
+                                return;
+                            }
+                            throw error;
                         }
                         const rawTopicEvent: TopicEvent<Buffer> = {
                             topic: topic as Topic,
@@ -173,12 +196,21 @@ export class KafkaEventStreamConsumer {
                                 correlationId: message.headers?.correlationId?.toString('utf-8') as CorrelationId,
                             }),
                         };
-                        console.log(`Received Topic message: ${topic}: ${message.value.length}bytes`);
-                        await Promise.all(
-                            processorsForTopic.map(async processor => {
-                                await processTopicEvent(this.registry, rawTopicEvent, processor.processors);
-                            }),
-                        );
+                        console.log(`Received Topic message: ${topic} [${schemaName}]: ${message.value.length}bytes`);
+                        try {
+                            await Promise.all(
+                                processorsForTopic.map(async processor => {
+                                    await processTopicEvent(this.registry, rawTopicEvent, processor.processors);
+                                }),
+                            );
+                        } catch (e) {
+                            console.error(`Failed processing topic: ${topic} [${schemaName}]`);
+                            if (!this.onError || this.onError(ProcessingErrors.Processor, e) === 'throw') {
+                                throw e;
+                            }
+                        }
+                    } else {
+                        console.log(`Topic message with no schema: ${topic}: ${message.value?.length ?? 0}bytes`);
                     }
                 },
             });
@@ -188,4 +220,13 @@ export class KafkaEventStreamConsumer {
             this.callback.once(1000, () => this.nextState());
         }
     }
+}
+
+function toString(source: string | Buffer | undefined | null): string | null {
+    if (Buffer.isBuffer(source)) {
+        return source.toString('utf-8');
+    } else if (typeof source !== 'string') {
+        return null;
+    }
+    return source;
 }
