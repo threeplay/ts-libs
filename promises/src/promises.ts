@@ -9,8 +9,13 @@ export abstract class Promises {
         return Promise.all(list.map(fn));
     }
 
-    public static once(fn: () => Promise<void>): () => Promise<void> {
-        let invoked: Promise<void> | undefined;
+    /**
+     * Returns a method that calling it will invoke fn once and will share the promise
+     * results after it is completed.
+     * @param fn method to invoke once
+     */
+    public static once<T>(fn: () => Promise<T>): () => Promise<T> {
+        let invoked: Promise<T> | undefined;
         return () => {
             if (!invoked) {
                 invoked = fn();
@@ -19,6 +24,11 @@ export abstract class Promises {
         };
     }
 
+    /**
+     * Returns a method that will invoke fn once for each time it was called but
+     * invocations will be serialized
+     * @param fn method to invoke
+     */
     public static serialize(fn: () => Promise<void>): () => Promise<void> {
         const queue: (() => Promise<void>)[] = [];
         let running = false;
@@ -37,7 +47,7 @@ export abstract class Promises {
                 try {
                     await fn();
                     deferredPromise.resolve();
-                } catch (e) {
+                } catch (e: any) {
                     deferredPromise.reject(e);
                 } finally {
                     running = false;
@@ -50,4 +60,40 @@ export abstract class Promises {
             return deferredPromise.promise;
         };
     }
+
+    /**
+     * Returns a method that will invoke the factory only once if called concurrently by
+     *  multiple callers
+     * @param factory function returning a promise to generate the result. This promise will
+     *                be shared by all callers until it is resolved or rejected
+     */
+    public static shared<T>(factory: () => Promise<T>): () => Promise<T> {
+        let executing: Promise<T> | null = null;
+        return async () => {
+            if (executing) {
+                return executing;
+            }
+            executing = factory().finally(() => {
+                executing = null;
+            });
+            return executing;
+        };
+    }
+
+    public static keyedShared(): KeyedSharePromise {
+        const executingPromises = new Map<string, Promise<unknown>>();
+        return <T>(key: string, invoke: () => Promise<T>) => {
+            const executing = executingPromises.get(key);
+            if (executing) {
+                return executing as Promise<T>;
+            }
+            const invoked = invoke().finally(() => {
+                executingPromises.delete(key);
+            });
+            executingPromises.set(key, invoked);
+            return invoked as Promise<T>;
+        };
+    }
 }
+
+type KeyedSharePromise = <T>(key: string, invoke: () => Promise<T>) => Promise<T>;

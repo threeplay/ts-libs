@@ -5,11 +5,12 @@ export class RedisSchemaRegistryStore implements PersistentSchemaStore {
     private readonly client: IoRedis.Redis;
     private readonly prefix: string;
 
-    constructor(config?: { host?: string, port?: number, db?: number, prefix?: string }) {
+    constructor(config?: { host?: string, port?: number, db?: number, prefix?: string, password?: string }) {
         this.client = new IoRedis({
             port: config?.port,
             host: config?.host,
             db: config?.db,
+            password: config?.password,
         });
         this.prefix = config?.prefix ?? 'schema';
     }

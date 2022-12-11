@@ -1,9 +1,9 @@
 {
-  "name": "@threeplay/schema",
-  "version": "0.6.0",
-  "description": "Core schema support",
-  "main": "dist/index.js",
+  "name": "@threeplay/observability",
+  "version": "0.1.0",
+  "description": "Observability support",
   "dist": {},
+  "main": "dist/index.js",
   "files": [
     "dist"
   ],
@@ -14,7 +14,7 @@
     "build": "tsc -p tsconfig.build.json",
     "test": "ts-mocha -p tsconfig.json -r mocha.base.ts 'src/**/*.spec.ts'",
     "test-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run test\"",
-    "cover": "nyc --exclude '**/*.spec.ts' npm test",
+    "cover": "nyc npm test",
     "cover-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run cover\""
   },
   "author": "Threeplay Inc.",
@@ -32,8 +32,6 @@
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11",
     "chai": "^4.3.6",
-    "@threeplay/test-support": "^0",
-    "chai-as-promised": "^7.1.1",
     "mocha": "^10.0.0",
     "sinon": "^13.0.2",
     "nyc": "^15.1.0",
