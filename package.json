@@ -10,6 +10,7 @@
     "promises",
     "schema",
     "schema.avro",
+    "schema.json",
     "schema.redis-registry",
     "event-stream",
     "event-stream.kafka"
