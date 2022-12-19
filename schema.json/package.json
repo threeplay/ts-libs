@@ -1,7 +1,7 @@
 {
-  "name": "@threeplay/promises",
-  "version": "0.5.0",
-  "description": "Promise utilities",
+  "name": "@threeplay/schema.json",
+  "version": "0.1.0",
+  "description": "Schema: Json Support",
   "main": "dist/index.js",
   "dist": {},
   "files": [
@@ -14,7 +14,7 @@
     "build": "tsc -p tsconfig.build.json",
     "test": "ts-mocha -p tsconfig.json -r mocha.base.ts 'src/**/*.spec.ts'",
     "test-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run test\"",
-    "cover": "nyc npm test",
+    "cover": "nyc --exclude **/*.spec.ts npm test",
     "cover-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run cover\""
   },
   "author": "Threeplay Inc.",
@@ -26,14 +26,14 @@
     "ui": "bdd"
   },
   "dependencies": {
+    "@threeplay/schema": "^0",
+    "ajv": "^8.11.2"
   },
   "devDependencies": {
     "@types/chai": "^4.2.21",
     "@types/mocha": "^9.0.0",
     "@types/node": "^16.11",
-    "@types/chai-as-promised": "^7.1.5",
     "chai": "^4.3.6",
-    "chai-as-promised": "^7.1.1",
     "concurrently": "^5.3.0",
     "mocha": "^10.0.0",
     "sinon": "^13.0.2",
