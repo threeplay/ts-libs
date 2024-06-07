@@ -1,0 +1,43 @@
+{
+  "name": "@threeplay/http",
+  "version": "0.1.0",
+  "description": "Http Service Utilities",
+  "main": "dist/index.js",
+  "dist": {},
+  "files": [
+    "./dist"
+  ],
+  "engine": {
+    "node": "16.12"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "test": "ts-mocha -p tsconfig.json -r mocha.base.ts 'src/**/*.spec.ts'",
+    "test-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run test\"",
+    "cover": "nyc --exclude **/*.spec.ts npm test",
+    "cover-watch": "nodemon -w ./src -e ts,js,json --exec \"npm run cover\""
+  },
+  "author": "Threeplay Inc.",
+  "license": "ISC",
+  "mocha": {
+    "asyncOnly": true,
+    "slow": "100",
+    "timeout": "2000",
+    "ui": "bdd"
+  },
+  "dependencies": {
+  },
+  "devDependencies": {
+    "@types/chai": "^4.2.21",
+    "@types/mocha": "^9.0.0",
+    "@types/node": "^16.11",
+    "chai": "^4.3.6",
+    "concurrently": "^5.3.0",
+    "mocha": "^10.0.0",
+    "sinon": "^13.0.2",
+    "nyc": "^15.1.0",
+    "nodemon": "^2.0.7",
+    "ts-mocha": "^10.0.0",
+    "typescript": "4.2.3"
+  }
+}

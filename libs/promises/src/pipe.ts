@@ -53,7 +53,10 @@ export class PromisePipe<T> implements PromiseLike<T> {
         return current as T;
     }
 
-    public then<TResult1 = T, TResult2 = never>(onfulfilled?: ((value: T) => (PromiseLike<TResult1> | TResult1)) | undefined | null, onrejected?: ((reason: any) => (PromiseLike<TResult2> | TResult2)) | undefined | null): PromiseLike<TResult1 | TResult2> {
+    public then<TResult1 = T, TResult2 = never>(
+        onfulfilled?: ((value: T) => (PromiseLike<TResult1> | TResult1)) | undefined | null,
+        onrejected?: ((reason: any) => (PromiseLike<TResult2> | TResult2)) | undefined | null
+    ): PromiseLike<TResult1 | TResult2> {
         return this.once().then(onfulfilled, onrejected);
     }
 }

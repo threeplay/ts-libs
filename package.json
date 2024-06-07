@@ -1,18 +1,17 @@
 {
   "name": "ts-libs",
   "scripts": {
+    "preinstall": "npx only-allow pnpm",
     "publish": "echo publishing"
   },
-  "workspaces": [
-    "test-support",
-    "observability",
-    "collections",
-    "promises",
-    "schema",
-    "schema.avro",
-    "schema.json",
-    "schema.redis-registry",
-    "event-stream",
-    "event-stream.kafka"
-  ]
+  "packageManager": "pnpm@9.1.3+sha512.7c2ea089e1a6af306409c4fc8c4f0897bdac32b772016196c469d9428f1fe2d5a21daf8ad6512762654ac645b5d9136bb210ec9a00afa8dbc4677843ba362ecd",
+  "devDependencies": {
+    "@nx/eslint-plugin": "19.2.2",
+    "@nx/js": "19.2.2",
+    "@swc-node/register": "~1.9.1",
+    "@swc/core": "~1.5.7",
+    "@swc/helpers": "~0.5.11",
+    "nx": "19.2.2",
+    "prettier": "^2.6.2"
+  }
 }
