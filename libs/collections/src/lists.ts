@@ -1,4 +1,13 @@
 export abstract class Lists {
+    public static pairs<T>(values: T[]): [T, T][] {
+        const numberOfPairs = Math.floor(values.length/2);
+        const pairs: [T, T][] = [];
+        for (let i = 0; i < 2*numberOfPairs; i += 2) {
+            pairs.push([values[i], values[i+1]]);
+        }
+        return pairs;
+    }
+
     public static distinct<T>(list: T[], byKey: (item: T) => unknown = key => key): T[] {
         const seen = new Set<unknown>();
         return list.filter(item => {
