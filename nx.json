@@ -1,0 +1,21 @@
+{
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
+  "targetDefaults": {
+    "build": {
+      "outputs": [
+        "{projectRoot}/dist"
+      ],
+      "cache": true
+    },
+    "test": {
+      "cache": true
+    },
+    "cover": {
+      "cache": true
+    }
+  },
+  "release": {
+    "projects": ["*"]
+  },
+  "defaultBase": "master"
+}
