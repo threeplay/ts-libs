@@ -3,7 +3,10 @@ import {Logger, Metrics, ObservabilityTags} from "./types";
 export class Observability {
     private static readonly modules = new Map<string, Observability>();
 
-    private static getNullLogger(): Logger {
+    private static logger: Logger = Observability.createNullLogger();
+    private static metrics: Metrics = Observability.createNullMetrics();
+
+    public static createNullLogger(): Logger {
         return {
             debug: () => {},
             info: () => {},
@@ -12,7 +15,7 @@ export class Observability {
         };
     }
 
-    private static getNullMetrics(): Metrics {
+    public static createNullMetrics(): Metrics {
         return {
             incrementBy: () => {},
             decrementBy: () => {},
@@ -24,43 +27,65 @@ export class Observability {
         return getOrCreate(module, this.modules, () => new Observability(module));
     }
 
+    public static assignLogger(logger: Logger): Logger {
+        const current = this.logger;
+        this.logger = logger;
+        return current;
+    }
+
+    public static assignMetrics(metrics: Metrics): Metrics {
+        const current = this.metrics;
+        this.metrics = metrics;
+        return current;
+    }
+
     private readonly loggers = new Map<string, Logger>();
     private readonly metrics = new Map<string, Metrics>();
-    private defaultLogger: Logger = Observability.getNullLogger();
-    private defaultMetrics: Metrics = Observability.getNullMetrics();
+    private defaultLogger: Logger | null = null;
+    private defaultMetrics: Metrics | null = null;
 
     private constructor(private readonly module: string) {}
 
-    public setDefaultLogger(logger: Logger): void {
-        this.defaultLogger = logger;
+    public setDefaultLogger(logger?: Logger | null): void {
+        this.defaultLogger = logger ?? null;
     }
 
-    public setDefaultMetrics(metrics: Metrics): void {
-        this.defaultMetrics = metrics;
+    public setDefaultMetrics(metrics?: Metrics | null): void {
+        this.defaultMetrics = metrics ?? null;
     }
 
-    public setLogger(name: string, logger: Logger): void {
-        this.loggers.set(name, logger);
+    public setLogger(name: string, logger?: Logger | null): void {
+        if (logger) {
+            this.loggers.set(name, logger);
+        } else {
+            this.loggers.delete(name);
+        }
     }
 
-    public setMetrics(name: string, metrics: Metrics): void {
-        this.metrics.set(name, metrics);
+    public setMetrics(name: string, metrics?: Metrics | null): void {
+        if (metrics) {
+            this.metrics.set(name, metrics);
+        } else {
+            this.loggers.delete(name);
+        }
     }
 
     public getLogger(name: string, tags?: ObservabilityTags): Logger {
+        const logger = () => this.loggers.get(name) ?? this.defaultLogger ?? Observability.logger;
         return getOrCreate(name, this.loggers, () => ({
-            debug: (msg, args) => this.defaultLogger.debug(msg, { ...tags, ...args }),
-            info: (msg, args) => this.defaultLogger.info(msg, { ...tags, ...args }),
-            warn: (msg, args) => this.defaultLogger.warn(msg, { ...tags, ...args }),
-            error: (msg, args) => this.defaultLogger.error(msg, { ...tags, ...args }),
+            debug: (msg, args) => logger().debug(msg, { module: this.module, logger: name, ...tags, ...args }),
+            info: (msg, args) => logger().info(msg, { module: this.module, logger: name, ...tags, ...args }),
+            warn: (msg, args) => logger().warn(msg, { module: this.module, logger: name, ...tags, ...args }),
+            error: (msg, args) => logger().error(msg, { module: this.module, logger: name, ...tags, ...args }),
         }));
     }
 
     public getMetrics(name: string, tags?: ObservabilityTags): Metrics {
+        const metrics = () => this.metrics.get(name) ?? this.defaultMetrics ?? Observability.metrics;
         return getOrCreate(name, this.metrics, () => ({
-            incrementBy: (name, count, args) => this.defaultMetrics.incrementBy(name, count, args),
-            decrementBy: (name, count, args) => this.defaultMetrics.decrementBy(name, count, args),
-            timing: (name, durationInMs, args) => this.defaultMetrics.timing(name, durationInMs, args),
+            incrementBy: (name, count, args) => metrics().incrementBy(name, count, { module: this.module, logger: name, ...tags, ...args }),
+            decrementBy: (name, count, args) => metrics().decrementBy(name, count, { module: this.module, logger: name, ...tags, ...args }),
+            timing: (name, durationInMs, args) => metrics().timing(name, durationInMs, { module: this.module, logger: name, ...tags, ...args }),
         }));
     }
 }
