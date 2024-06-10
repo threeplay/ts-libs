@@ -1,6 +1,4 @@
 import {Logger, Metrics, ObservabilityTags} from "./types";
-import {createApiAxiosInstance} from "nx/src/nx-cloud/utilities/axios";
-
 
 type ObservabilityConfig = {
     logger?: Logger | null;
