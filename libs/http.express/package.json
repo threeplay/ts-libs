@@ -1,6 +1,6 @@
 {
   "name": "@threeplay/http.express",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Http Server implementation using express",
   "main": "dist/index.js",
   "dist": {},
