@@ -1,5 +1,5 @@
 import {Observability} from "@threeplay/observability";
-import {Endpoint, HttpService, HttpServiceClosable, MethodHandler, WebSocketHandler} from "@threeplay/http";
+import {Endpoint, HttpService, HttpServiceClosable, Method, MethodHandler, WebSocketHandler} from "@threeplay/http";
 import express, {Application, Request as ExpressRequest, Response as ExpressResponse} from "express";
 import {Server} from "net";
 import * as WebSocket from "ws";
@@ -24,24 +24,34 @@ export class ExpressHttpService implements HttpService {
         this.app.use(express.json({ type: 'application/json', limit: options.maxContentLength }));
     }
 
-    public registerEndpoint(endpoint: Endpoint): void {
-        if (endpoint.methods.get) {
-            this.app.get(endpoint.path, this.wrapHandler(endpoint.methods.get.handler));
-        }
-        if (endpoint.methods.put) {
-            this.app.put(endpoint.path, this.wrapHandler(endpoint.methods.put.handler));
-        }
-        if (endpoint.methods.post) {
-            this.app.post(endpoint.path, this.wrapHandler(endpoint.methods.post.handler));
-        }
-        if (endpoint.methods.del) {
-            this.app.delete(endpoint.path, this.wrapHandler(endpoint.methods.del.handler));
-        }
-        if (endpoint.methods.patch) {
-            this.app.patch(endpoint.path, this.wrapHandler(endpoint.methods.patch.handler));
-        }
-        if (endpoint.methods.websocket) {
-            this.websocketEndpoints.set(endpoint.path, endpoint.methods.websocket);
+    public registerEndpoint(endpoints: Endpoint | Endpoint[]): void {
+        for (const endpoint of Array.isArray(endpoints) ? endpoints : [endpoints]) {
+            if (endpoint.methods.get) {
+                this.app.get(endpoint.path, this.wrapHandler(endpoint.methods.get));
+            }
+            if (endpoint.methods.put) {
+                this.app.put(endpoint.path, this.wrapHandler(endpoint.methods.put));
+            }
+            if (endpoint.methods.post) {
+                this.app.post(endpoint.path, this.wrapHandler(endpoint.methods.post));
+            }
+            if (endpoint.methods.del) {
+                this.app.delete(endpoint.path, this.wrapHandler(endpoint.methods.del));
+            }
+            if (endpoint.methods.patch) {
+                this.app.patch(endpoint.path, this.wrapHandler(endpoint.methods.patch));
+            }
+            if (endpoint.methods.websocket) {
+                this.websocketEndpoints.set(endpoint.path, endpoint.methods.websocket);
+            }
+            if (endpoint.subpaths) {
+                for (const subpath of Array.isArray(endpoint.subpaths) ? endpoint.subpaths : [endpoint.subpaths]) {
+                    this.registerEndpoint({
+                        ...subpath,
+                        path: joinPaths(endpoint.path, subpath.path),
+                    });
+                }
+            }
         }
     }
 
@@ -119,7 +129,8 @@ export class ExpressHttpService implements HttpService {
         return { handler: null, params: {} };
     }
 
-    private wrapHandler(handler: MethodHandler): (req: ExpressRequest, res: ExpressResponse) => void {
+    private wrapHandler(methodHandler: Method | MethodHandler): (req: ExpressRequest, res: ExpressResponse) => void {
+        const handler = typeof methodHandler === 'function' ? methodHandler : methodHandler.handler;
         return (req, res) => {
             Logger.debug(`Handling request: ${req.method} ${req.path} [${JSON.stringify(req.params)}]`);
             handler({
@@ -151,4 +162,10 @@ function mapHeaders(headers: IncomingHttpHeaders): Record<string, string> {
         .map(([key, value]) =>
             [key, Array.isArray(value) ? value.join(';') : value ?? '']
         ));
+}
+
+function joinPaths(base: string, path: string): string {
+    const pathWithoutInitialSlash = path.startsWith('/') ? path.slice(1) : path;
+    const baseWithoutFinalSlash = base.endsWith('/') ? path.slice(0, -1) : path;
+    return `${baseWithoutFinalSlash}/${pathWithoutInitialSlash}`;
 }

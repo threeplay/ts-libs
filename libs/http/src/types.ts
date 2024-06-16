@@ -34,13 +34,14 @@ export type MethodHandler = (request: Request) => Promise<Response>;
 export type Endpoint = {
     path: string;
     methods: {
-        get?: Method;
-        post?: Method;
-        put?: Method;
-        del?: Method;
-        patch?: Method;
+        get?: Method | MethodHandler;
+        post?: Method | MethodHandler;
+        put?: Method | MethodHandler;
+        del?: Method | MethodHandler;
+        patch?: Method | MethodHandler;
         websocket?: WebSocketHandler;
     },
+    subpaths?: Endpoint | Endpoint[];
 }
 
 export interface HttpService {
